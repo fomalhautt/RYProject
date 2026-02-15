@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RY.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +15,25 @@ namespace RYProject
         [STAThread]
         static void Main()
         {
+            Application.ThreadException += Application_ThreadException; //UI线程异常
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandleException; //多线程异常
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+        }
+
+        //UI线程异常
+        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            UserLog.AddExceptionMsg(e.Exception);
+            MsgBox.ShowError(e.Exception.ToString());
+        }
+
+        //多线程异常
+        static void CurrentDomain_UnhandleException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MsgBox.ShowError(e.ExceptionObject.ToString());
+            UserLog.AddErrorMsg(e.ExceptionObject.ToString());
         }
     }
 }
